@@ -1,5 +1,7 @@
 import 'react-loading-skeleton/dist/skeleton.css';
 import Poster from './Poster';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Anime from './Anime';
 
 const AnimeContainer = (props: any) => {
 
@@ -10,7 +12,12 @@ const AnimeContainer = (props: any) => {
   }
 
   return(
-    poster()
+    <>
+    <Routes>
+      {poster()}
+      <Route path="/anime/:link" element={<Anime/>} />
+    </Routes>
+    </>
   )
 
 }
