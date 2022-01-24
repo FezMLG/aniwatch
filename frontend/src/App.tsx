@@ -79,6 +79,15 @@ function App() {
     );
   };
 
+  const Logo = () => {
+    return (
+      <div className="App-logo">
+        <div className="logo"></div>
+        <h1 className="font-bold text-4xl">AniWatch</h1>
+      </div>
+    );
+  };
+
   useEffect(() => {
     if (seasonYear.length === 4 && seasonSelect != "0") {
       fetchData();
@@ -87,14 +96,11 @@ function App() {
 
   return (
     <div className="App-container bg-gray-900 text-white min-h-screen">
-      <div className="App-logo">
-        <div className="logo"></div>
-        <h1 className="font-bold text-4xl">AniWatch</h1>
-      </div>
       <Router>
         {/* <AnimeContainer series={animeList} /> */}
         <Switch>
           <Route exact path="/">
+            <Logo />
             <AnimeFilters />
             <AnimeContainer series={animeList} />
           </Route>
