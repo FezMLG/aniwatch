@@ -1,8 +1,7 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Link,
-  matchPath,
   NavLink,
   Route,
   Switch,
@@ -61,6 +60,7 @@ const Anime = (props: any) => {
               key={index}
               href={player.link}
               target="_blank"
+              rel="noreferrer"
               className="border rounded border-transparent px-4 py-2 box-content bg-blue-700"
             >
               {player.name}

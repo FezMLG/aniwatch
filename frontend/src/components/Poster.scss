@@ -1,0 +1,23 @@
+.Poster-cover {
+  background: rgba(var(--color-background-300), 0.8);
+  border-radius: 4px;
+  box-shadow: 0 14px 30px rgba(var(--color-shadow-blue), 0.15),
+    0 4px 4px rgba(var(--color-shadow-blue), 0.05);
+  cursor: pointer;
+  display: inline-block;
+  height: auto;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  z-index: 5;
+}
+
+.Poster-card {
+  animation: 0.3s linear;
+  display: grid;
+  grid-template-rows: -webkit-min-content auto;
+  grid-template-rows: min-content auto;
+  position: relative;
+  width: auto;
+  row-gap: 5px;
+}

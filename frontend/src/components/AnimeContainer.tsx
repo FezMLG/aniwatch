@@ -1,7 +1,5 @@
 import "react-loading-skeleton/dist/skeleton.css";
 import Poster from "./Poster";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import Anime from "./Anime";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 
 const AnimeContainer = (props: any) => {
@@ -20,16 +18,25 @@ const AnimeContainer = (props: any) => {
       : "";
   };
 
+  const n = 16;
+
   return (
     <>
       <div className="App-list">
-        <SkeletonTheme baseColor="#1F2937" highlightColor="#374151">
-          <div className="w-full">
-            <Skeleton height={180} />
-            <Skeleton />
-          </div>
-        </SkeletonTheme>
-        {poster()}
+        {poster()
+          ? poster()
+          : [...Array(n)].map((e, i) => (
+              <SkeletonTheme
+                baseColor="#1F2937"
+                highlightColor="#374151"
+                key={i}
+              >
+                <div className="w-full">
+                  <Skeleton height={180} />
+                  <Skeleton />
+                </div>
+              </SkeletonTheme>
+            ))}
       </div>
     </>
   );

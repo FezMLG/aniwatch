@@ -10,7 +10,34 @@ export const baseUrl = `http://192.168.8.151:4000`;
 
 function App() {
   const year = new Date().getFullYear().toString();
-  const season = "0";
+  const month = new Date().getMonth().toString();
+  let season: string;
+  switch (month) {
+    case "0":
+    case "1":
+    case "2":
+      season = "4";
+      break;
+    case "3":
+    case "4":
+    case "5":
+      season = "1";
+      break;
+    case "6":
+    case "7":
+    case "8":
+      season = "2";
+      break;
+    case "9":
+    case "10":
+    case "11":
+      season = "3";
+      break;
+
+    default:
+      season = "0";
+      break;
+  }
 
   const [animeList, setAnimeList] = useState<any>();
   const [seasonYear, setSeasonYear] = useState<string>(year);
@@ -53,13 +80,17 @@ function App() {
   };
 
   useEffect(() => {
-    if (seasonYear.length == 4) {
+    if (seasonYear.length === 4 && seasonSelect != "0") {
       fetchData();
     }
   }, [seasonYear, seasonSelect]);
 
   return (
     <div className="App-container bg-gray-900 text-white min-h-screen">
+      <div className="App-logo">
+        <div className="logo"></div>
+        <h1 className="font-bold text-4xl">AniWatch</h1>
+      </div>
       <Router>
         {/* <AnimeContainer series={animeList} /> */}
         <Switch>

@@ -1,20 +1,14 @@
-import React from "react";
-import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { Link } from "react-router-dom";
-import Anime from "./Anime";
+import "./Poster.scss";
 
 const Poster = (props: any) => {
   return (
-    <div className="w-full">
+    <div className="w-full Poster-card">
       <Link to={`/anime/${props.link}`}>
-        {<img src={props.poster} alt="poster" />}
-        {props.title}
-        {/* <a href={props.link} className="">
-          {<img src={props.poster} alt="poster" />}
-        </a>
-        <a href={props.link} className="">
-          {props.title}
-        </a> */}
+        {<img src={props.poster} alt="poster" className="Poster-cover" />}
+      </Link>
+      <Link to={`/anime/${props.link}`}>
+        <span>{props.title}</span>
       </Link>
     </div>
   );

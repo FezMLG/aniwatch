@@ -1,13 +1,17 @@
 .App-container {
-  max-width: 1000px;
+  max-width: 1500px;
   margin: auto;
 }
 
 .App-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  grid-gap: 20px 12px;
+  grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+  grid-gap: 28px 30px;
   padding: 0 10px;
+
+  @media (max-width: 760px) {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
 }
 
 .App-filter {
@@ -16,6 +20,26 @@
   flex-wrap: wrap;
   justify-content: space-evenly;
   align-items: stretch;
+}
+
+.App-logo {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 50px;
+  border-radius: 8px;
+  justify-content: center;
+
+  .logo {
+    background-image: url("../public/logo.jpg");
+    width: 100px;
+    height: 100px;
+    background-clip: content-box;
+    background-position: center;
+    background-size: contain;
+    border-radius: 1rem;
+  }
 }
 
 .filter-style {
