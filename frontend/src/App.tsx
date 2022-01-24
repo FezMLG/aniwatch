@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import logo from "./logo.svg";
-import "./App.css";
+import "./App.scss";
 import axios from "axios";
 import AnimeContainer from "./components/AnimeContainer";
-import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Anime from "./components/Anime";
 
-const baseUrl = `http://localhost:4000`;
+export const baseUrl = `http://192.168.8.151:4000`;
 
 function App() {
   const year = new Date().getFullYear().toString();
@@ -19,7 +18,7 @@ function App() {
 
   const fetchData = async () => {
     console.log(seasonSelect, seasonYear);
-    const result = await axios.post(baseUrl + "/api/anime/season/", {
+    const result = await axios.post(baseUrl + "/api/anime/season", {
       offset: "0",
       season: seasonSelect,
       year: seasonYear,
@@ -27,15 +26,9 @@ function App() {
     setAnimeList(result.data?.series);
   };
 
-  useEffect(() => {
-    if (seasonYear.length == 4) {
-      fetchData();
-    }
-  }, [seasonYear, seasonSelect]);
-
-  return (
-    <div className="App-container bg-gray-900 text-white min-h-screen">
-      {/* <div className="App-filter py-5">
+  const AnimeFilters = () => {
+    return (
+      <div className="App-filter py-5">
         <input
           className="w-48 h-12 rounded shadow-lg px-4 py-6 bg-gray-800 outline-none"
           type="number"
@@ -55,23 +48,28 @@ function App() {
           <option value="2">Lato</option>
           <option value="3">Jesień</option>
         </select>
-      </div> */}
-      {/* <AnimeFilters /> */}
-      <div className="App-list">
-        <Router>
-          <AnimeContainer series={animeList} />
-          <SkeletonTheme baseColor="#1F2937" highlightColor="#374151">
-            <div className="w-full">
-              <Skeleton height={180} />
-              <Skeleton />
-            </div>
-          </SkeletonTheme>
-          <Routes>
-            <Route path="/" element={<AnimeContainer series={animeList} />} />
-            <Route path="/anime/:link" element={<Anime />} />
-          </Routes>
-        </Router>
       </div>
+    );
+  };
+
+  useEffect(() => {
+    if (seasonYear.length == 4) {
+      fetchData();
+    }
+  }, [seasonYear, seasonSelect]);
+
+  return (
+    <div className="App-container bg-gray-900 text-white min-h-screen">
+      <Router>
+        {/* <AnimeContainer series={animeList} /> */}
+        <Switch>
+          <Route exact path="/">
+            <AnimeFilters />
+            <AnimeContainer series={animeList} />
+          </Route>
+          <Route path="/anime/:link" component={Anime} />
+        </Switch>
+      </Router>
     </div>
   );
 }

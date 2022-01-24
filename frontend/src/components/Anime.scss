@@ -1,0 +1,57 @@
+$color-shadow-dark: 6, 13, 34;
+$color-foreground: 21, 31, 46;
+
+.Anime-title {
+  display: grid;
+  grid-column-gap: 20px;
+  grid-template-columns: 215px auto;
+
+  & .poster {
+    margin-top: -125px;
+  }
+
+  @media (max-width: 760px) {
+    grid-template-columns: 125px auto;
+
+    & .poster {
+      max-width: 125px;
+      margin-top: -100px;
+    }
+  }
+}
+
+.Anime-header {
+  background: rgb(21, 31, 46);
+  position: relative;
+}
+
+.Anime-banner {
+  background-position: 50% 35%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 400px;
+  margin-top: -58px;
+
+  & .inner-shadow {
+    background: linear-gradient(
+      180deg,
+      rgba(6, 13, 34, 0) 40%,
+      rgba(6, 13, 34, 0.6)
+    );
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.Anime-backBtn {
+  display: flex;
+  position: sticky;
+  top: 10px;
+  z-index: 1;
+  padding: 10px;
+  align-items: center;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  width: fit-content;
+  border-radius: 0px 8px 8px 0px;
+}
