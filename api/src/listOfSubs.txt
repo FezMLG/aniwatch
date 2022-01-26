@@ -1,0 +1,5 @@
+https://frixysubs.pl/ - providing api
+https://nanasubs.pl/ - jsdom
+https://wbijam.pl/ - jsdom
+https://fumetsu.pl/ - still working on this
+https://okami-subs.pl/ - probably jsdom
