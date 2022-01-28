@@ -8,8 +8,6 @@ import {
   getAllFromSeasonFrixy as seasonFrixy,
 } from "./frixysubs";
 
-const allSeries = [];
-
 export const getAllAnimeFromSubs = async (req: Request, res: Response) => {
   try {
     const nana = await listNana();
