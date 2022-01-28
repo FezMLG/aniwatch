@@ -1,6 +1,6 @@
 import puppeteer from "puppeteer";
 import axios from "axios";
-import FormData from "form-data";
+import FormData, { from } from "form-data";
 
 import { Request, Response } from "express";
 import { JSDOM } from "jsdom";
@@ -12,18 +12,18 @@ const year = "";
 const baseURL = `https://nanasubs.pl`;
 const animeListURL = `${baseURL}/queries/ns-anime_search.php`;
 const animeInfoURL = `${baseURL}/anime/${title}`;
-const animeSeasonURL = `${baseURL}/anime/sezony/${season}-${year}`;
+// const animeSeasonURL = `${baseURL}/anime/sezony/${season}-${year}`;
 
-const getDataFromPage = async (URL: string) => {
+const getDataFromPage = async (URL: string, form: string[][]) => {
   const formData = new FormData();
-  formData.append("order", "title");
-  formData.append("sort", "ASC");
+  form.forEach((element) => {
+    formData.append(element[0], element[1]);
+  });
 
   try {
     const result = await axios.post(URL, formData, {
       headers: formData.getHeaders(),
     });
-    // console.log(result.data);
     return result.data;
   } catch (error) {
     return error;
@@ -47,9 +47,53 @@ const scrapeDataFromHTML = (
   return returnValue;
 };
 
-export const getListOfAnime = async () => {
+export const getListOfAllNana = async () => {
   try {
-    const webpage = await getDataFromPage(animeListURL);
+    const form = [
+      ["order", "title"],
+      ["sort", "ASC"],
+    ];
+    const webpage = await getDataFromPage(animeListURL, form);
+    const title = await scrapeDataFromHTML(webpage, ".img-box .content h3");
+    const poster = await scrapeDataFromHTML(webpage, ".img-box img", "src");
+    let link = await scrapeDataFromHTML(webpage, ".card-link", "href");
+    let temp: any = [];
+
+    link.forEach((element) => {
+      temp.push(findTitleString(element));
+    });
+
+    link = temp;
+
+    const animeArray = [];
+
+    for (let i = 0; i < title.length; i++) {
+      const temp = {
+        title: title[i],
+        poster: poster[i],
+        link: link[i],
+      };
+      animeArray.push(temp);
+    }
+    return animeArray;
+  } catch (err: any) {
+    console.log("Nanatsu getListOfAnime error: " + err);
+    return;
+  }
+};
+
+export const getAllFromSeason = async (
+  season: string | number,
+  year: string | number
+) => {
+  try {
+    const form = [
+      ["order", "title"],
+      ["sort", "ASC"],
+      ["url", `${season}-${year}`],
+    ];
+    const animeSeasonURL = `${baseURL}/queries/ns-anime_search_season.php`;
+    const webpage = await getDataFromPage(animeSeasonURL, form);
     const title = await scrapeDataFromHTML(webpage, ".img-box .content h3");
     const poster = await scrapeDataFromHTML(webpage, ".img-box img", "src");
     let link = await scrapeDataFromHTML(webpage, ".card-link", "href");
@@ -81,7 +125,11 @@ export const getListOfAnime = async () => {
 export const getInfoAboutAnime = async (req: Request, res: Response) => {
   try {
     try {
-      const webpage = await getDataFromPage(animeInfoURL);
+      const form = [
+        ["order", "title"],
+        ["sort", "ASC"],
+      ];
+      const webpage = await getDataFromPage(animeInfoURL, form);
       const title = await scrapeDataFromHTML(
         webpage,
         ".anime__container .anime__title"
