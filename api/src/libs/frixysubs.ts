@@ -81,7 +81,37 @@ export const getInfoAboutAnimeFrixy = async (baseLink: string) => {
     const { data } = await axios.get(
       `https://frixysubs.pl/api/anime/${baseLink}`
     );
-    return data;
+
+    let season: string = "";
+    switch (data.season.season) {
+      case 1:
+        season = "Wiosna";
+        break;
+      case 2:
+        season = "Lato";
+        break;
+      case 3:
+        season = "Jesień";
+        break;
+      case 4:
+        season = "Zima";
+        break;
+      default:
+        break;
+    }
+
+    const animeDetails = {
+      subs: "FrixySubs",
+      title: data.title,
+      poster: data.poster,
+      banner: data.banner,
+      description: data.description,
+      status: data.status,
+      ep_count: data.ep_count,
+      episodes: data.episodes,
+      season: `${season} ${data.season.year}`,
+    };
+    return animeDetails;
   } catch (err: any) {
     return { message: "Error occurred" };
   }

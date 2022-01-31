@@ -1,18 +1,8 @@
-import puppeteer from "puppeteer";
 import axios from "axios";
-import FormData, { from } from "form-data";
-
-import { Request, Response } from "express";
+import FormData from "form-data";
 import { JSDOM } from "jsdom";
 
-const title = "";
-const season = "";
-const year = "";
-
 const baseURL = `https://nanasubs.pl`;
-const animeListURL = `${baseURL}/queries/ns-anime_search.php`;
-// const animeInfoURL = `${baseURL}/anime/${title}`;
-// const animeSeasonURL = `${baseURL}/anime/sezony/${season}-${year}`;
 
 const getDataFromPage = async (URL: string, form: string[][]) => {
   const formData = new FormData();
@@ -53,6 +43,7 @@ export const getListOfAllNana = async () => {
       ["order", "title"],
       ["sort", "ASC"],
     ];
+    const animeListURL = `${baseURL}/queries/ns-anime_search.php`;
     const webpage = await getDataFromPage(animeListURL, form);
     const title = await scrapeDataFromHTML(webpage, ".img-box .content h3");
     const poster = await scrapeDataFromHTML(webpage, ".img-box img", "src");
@@ -137,17 +128,23 @@ export const getInfoAboutAnimeNana = async (subBaseLink: string) => {
         ".anime__wrapper img",
         "src"
       );
-      const banner = await scrapeDataFromHTML(webpage, ".anime__banner", "src");
+      const bannerStyle = await scrapeDataFromHTML(
+        webpage,
+        ".anime__banner",
+        "style"
+      );
+      const banner = findBackgroundUrl(bannerStyle[0]);
       const description = await scrapeDataFromHTML(
         webpage,
         ".anime__description"
       );
       const shortInfoAnime = await scrapeDataFromHTML(
         webpage,
-        ".anime__list info"
+        ".anime__list .info"
       );
       const season = shortInfoAnime[2];
-      const ep_count = shortInfoAnime[0];
+      const ep_count =
+        shortInfoAnime[0] && shortInfoAnime[0].replace(/\s+/g, " ").trim();
       const status = checkIfCompleted(ep_count);
       const episodes = await scrapeDataFromHTML(
         webpage,
@@ -156,16 +153,18 @@ export const getInfoAboutAnimeNana = async (subBaseLink: string) => {
       );
 
       const animeDetails = {
-        title,
-        poster,
-        description,
+        subs: "NanaSubs",
+        title: title[0],
+        poster: poster[0],
+        banner: banner,
+        description: description[0],
         status,
         ep_count,
         episodes,
         season,
       };
 
-      return { animeDetails };
+      return animeDetails;
     } catch (err: any) {
       return { message: "Error occurred" };
     }
@@ -204,5 +203,19 @@ const checkIfCompleted = (str: string | null) => {
     } else {
       return true;
     }
+  }
+};
+
+const findBackgroundUrl = (str: string | null) => {
+  const regex = /background-image:.url\(.(.*).\)/;
+  let m;
+  if (!str) return false;
+
+  while ((m = regex.exec(str)) !== null) {
+    // This is necessary to avoid infinite loops with zero-width matches
+    if (m.index === regex.lastIndex) {
+      regex.lastIndex++;
+    }
+    return m[1];
   }
 };

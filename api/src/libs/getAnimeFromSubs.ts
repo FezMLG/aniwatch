@@ -35,7 +35,7 @@ export const getAllAnimeFromSeason = async (req: Request, res: Response) => {
       NanaSubs: nana,
     };
 
-    res.status(200).send(subsList);
+    res.status(200).send({ subsList });
   } catch (err: any) {
     res.status(500).send({ message: "No title found" });
   }
