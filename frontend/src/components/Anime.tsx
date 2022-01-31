@@ -16,17 +16,29 @@ import { baseUrl } from "../App";
 const Anime = (props: any) => {
   const [animeDetails, setAnimeDetails] = useState<any>("");
 
-  const { link } = useParams<{ link: string }>();
+  const { subBaseLink, subName } =
+    useParams<{ subBaseLink: string; subName: string }>();
 
   // const link = "5toubun-no-hanayome";
+  console.log(subBaseLink);
+  console.log(subName);
 
-  const { title, poster, description, status, ep_count, episodes, season } =
-    animeDetails;
+  const {
+    title,
+    poster,
+    banner,
+    description,
+    status,
+    ep_count,
+    episodes,
+    season,
+  } = animeDetails;
 
   const fetchData = async () => {
-    console.log(link);
-    const result = await axios.post(baseUrl + "/api/anime/series/", {
-      name: link,
+    console.log(subBaseLink);
+    const result = await axios.post(baseUrl + "/api/anime/test/anime", {
+      subName,
+      subBaseLink,
     });
     setAnimeDetails(result.data);
   };
@@ -73,7 +85,7 @@ const Anime = (props: any) => {
   useEffect(() => {
     fetchData();
     console.log("deatils " + animeDetails.title);
-    console.log("/" + link);
+    console.log("/" + subBaseLink);
   }, []);
 
   const Description = () => {
@@ -90,9 +102,7 @@ const Anime = (props: any) => {
           </div>
           <div className="flex flex-col flex-nowrap">
             <span className="font-bold">Sezon</span>
-            <span>
-              {season?.season} / {season?.year}
-            </span>
+            <span>{season}</span>
           </div>
         </div>
         <div className="gap-8 mx-2 my-6 rounded shadow-lg px-4 py-6 bg-gray-800">
@@ -115,7 +125,7 @@ const Anime = (props: any) => {
     );
   };
 
-  let match = useRouteMatch("/anime/:link");
+  let match = useRouteMatch("/anime/:subName/:subBaseLink");
 
   return (
     <div>
@@ -129,7 +139,9 @@ const Anime = (props: any) => {
       <div className="Anime-header">
         <div
           className="Anime-banner"
-          style={{ backgroundImage: poster ? `url(${poster})` : "" }}
+          style={{
+            backgroundImage: banner ? `url(${banner})` : `url(${poster})`,
+          }}
         >
           <div className="inner-shadow"></div>
         </div>

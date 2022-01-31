@@ -199,9 +199,9 @@ const checkIfCompleted = (str: string | null) => {
     }
 
     if (m[1]) {
-      return false;
+      return "Wydawana";
     } else {
-      return true;
+      return "Zakończona";
     }
   }
 };

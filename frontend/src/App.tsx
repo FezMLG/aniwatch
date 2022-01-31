@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import logo from "./logo.svg";
 import "./App.scss";
 import axios from "axios";
-import AnimeContainer from "./components/AnimeContainer";
+import PosterContainer from "./components/PosterContainer";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Anime from "./components/Anime";
 
@@ -16,22 +16,22 @@ function App() {
     case "0":
     case "1":
     case "2":
-      season = "4";
+      season = "zima";
       break;
     case "3":
     case "4":
     case "5":
-      season = "1";
+      season = "wiosna";
       break;
     case "6":
     case "7":
     case "8":
-      season = "2";
+      season = "lato";
       break;
     case "9":
     case "10":
     case "11":
-      season = "3";
+      season = "jesien";
       break;
 
     default:
@@ -45,12 +45,11 @@ function App() {
 
   const fetchData = async () => {
     console.log(seasonSelect, seasonYear);
-    const result = await axios.post(baseUrl + "/api/anime/season", {
-      offset: "0",
+    const result = await axios.post(baseUrl + "/api/anime/test/season", {
       season: seasonSelect,
       year: seasonYear,
     });
-    setAnimeList(result.data?.series);
+    setAnimeList(result.data);
   };
 
   const AnimeFilters = () => {
@@ -70,10 +69,10 @@ function App() {
           onChange={(e) => setSeasonSelect(e.target.value)}
           value={seasonSelect}
         >
-          <option value="4">Zima</option>
-          <option value="1">Wiosna</option>
-          <option value="2">Lato</option>
-          <option value="3">Jesień</option>
+          <option value="zima">Zima</option>
+          <option value="wiosna">Wiosna</option>
+          <option value="lato">Lato</option>
+          <option value="jesien">Jesień</option>
         </select>
       </div>
     );
@@ -97,14 +96,14 @@ function App() {
   return (
     <div className="App-container bg-gray-900 text-white min-h-screen">
       <Router>
-        {/* <AnimeContainer series={animeList} /> */}
+        {/* <PosterContainer series={animeList} /> */}
         <Switch>
           <Route exact path="/">
             <Logo />
             <AnimeFilters />
-            <AnimeContainer series={animeList} />
+            <PosterContainer subsList={animeList} />
           </Route>
-          <Route path="/anime/:link" component={Anime} />
+          <Route path="/anime/:subName/:subBaseLink" component={Anime} />
         </Switch>
       </Router>
     </div>
