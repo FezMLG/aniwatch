@@ -31,7 +31,7 @@ const scrapeDataFromHTML = (
     if (attribute) {
       returnValue.push(element.getAttribute(attribute));
     } else {
-      returnValue.push(element.textContent);
+      returnValue.push(element.textContent!.trim());
     }
   });
   return returnValue;
@@ -143,14 +143,28 @@ export const getInfoAboutAnimeNana = async (subBaseLink: string) => {
         ".anime__list .info"
       );
       const season = shortInfoAnime[2];
-      const ep_count =
-        shortInfoAnime[0] && shortInfoAnime[0].replace(/\s+/g, " ").trim();
+      const ep_count = shortInfoAnime[0]!.replace(/\s+/g, " ").trim();
       const status = checkIfCompleted(ep_count);
-      const episodes = await scrapeDataFromHTML(
+      const episodesTitles = await scrapeDataFromHTML(
+        webpage,
+        ".episodes__title"
+      );
+      const episodesLinks = await scrapeDataFromHTML(
         webpage,
         ".episodes__slider a",
         "href"
       );
+
+      const episodes: any[] = [];
+
+      for (let i = 0; i < episodesTitles.length; i++) {
+        if (episodesTitles[i] == null) return;
+        const temp = {
+          title: episodesTitles[i],
+          link: episodesLinks[i],
+        };
+        episodes.push(temp);
+      }
 
       const animeDetails = {
         subs: "NanaSubs",
@@ -168,6 +182,36 @@ export const getInfoAboutAnimeNana = async (subBaseLink: string) => {
     } catch (err: any) {
       return { message: "Error occurred" };
     }
+  } catch (err: any) {
+    return { message: "No title found" };
+  }
+};
+
+export const loadEpisodes = async (link: string) => {
+  try {
+    const form: string[][] = [];
+    const webpage = await getDataFromPage(link, form);
+    const players = await scrapeDataFromHTML(
+      webpage,
+      ".episode__players-list .episode__player-btn",
+      "data-player-url"
+    );
+    const names = await scrapeDataFromHTML(
+      webpage,
+      ".episode__players-list .episode__player-btn"
+    );
+    const playersArray = [];
+
+    for (let i = 0; i < players.length; i++) {
+      if (players[i] == null) return;
+      const temp = {
+        name: names[i],
+        link: players[i],
+      };
+      playersArray.push(temp);
+    }
+
+    return playersArray;
   } catch (err: any) {
     return { message: "No title found" };
   }

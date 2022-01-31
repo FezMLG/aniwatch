@@ -3,6 +3,7 @@ import {
   getListOfAllNana as listNana,
   getAllFromSeason as seasonNana,
   getInfoAboutAnimeNana as titleNana,
+  loadEpisodes as episodesNana,
 } from "./nanasubs";
 import {
   getListOfAllFrixy as listFrixy,
@@ -57,6 +58,16 @@ export const getInfoAboutAnimeFromSub = async (req: Request, res: Response) => {
         break;
     }
     res.status(200).send(anime);
+  } catch (err: any) {
+    res.status(500).send({ message: "No title found" });
+  }
+};
+
+export const getEpisodesNana = async (req: Request, res: Response) => {
+  try {
+    const { episodeLink } = req.body;
+    const episode = await episodesNana(episodeLink);
+    res.status(200).send(episode);
   } catch (err: any) {
     res.status(500).send({ message: "No title found" });
   }

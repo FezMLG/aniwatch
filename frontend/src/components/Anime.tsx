@@ -19,10 +19,6 @@ const Anime = (props: any) => {
   const { subBaseLink, subName } =
     useParams<{ subBaseLink: string; subName: string }>();
 
-  // const link = "5toubun-no-hanayome";
-  console.log(subBaseLink);
-  console.log(subName);
-
   const {
     title,
     poster,
@@ -35,7 +31,6 @@ const Anime = (props: any) => {
   } = animeDetails;
 
   const fetchData = async () => {
-    console.log(subBaseLink);
     const result = await axios.post(baseUrl + "/api/anime/test/anime", {
       subName,
       subBaseLink,
@@ -55,12 +50,27 @@ const Anime = (props: any) => {
                 {index + 1}. {episode.title}
               </h3>
               <div className="flex flex-row flex-wrap justify-start my-4 gap-5">
+                {subName == "NanaSubs" ? loadEpisodesBtn : ""}
                 {players}
               </div>
             </>
           );
         })
       : "";
+  };
+
+  const loadEpisodesBtn = () => {
+    return (
+      <>
+        <button>Załaduj</button>
+      </>
+    );
+  };
+
+  const loadEpisodes = async (episodeLink: string) => {
+    const result = await axios.post(baseUrl + "/api/anime/test/anime", {
+      episodeLink,
+    });
   };
 
   const mapPlayers = (episode: { players: any[] }) => {
