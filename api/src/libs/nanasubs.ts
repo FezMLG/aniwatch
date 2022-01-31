@@ -11,7 +11,7 @@ const year = "";
 
 const baseURL = `https://nanasubs.pl`;
 const animeListURL = `${baseURL}/queries/ns-anime_search.php`;
-const animeInfoURL = `${baseURL}/anime/${title}`;
+// const animeInfoURL = `${baseURL}/anime/${title}`;
 // const animeSeasonURL = `${baseURL}/anime/sezony/${season}-${year}`;
 
 const getDataFromPage = async (URL: string, form: string[][]) => {
@@ -122,44 +122,55 @@ export const getAllFromSeason = async (
   }
 };
 
-export const getInfoAboutAnime = async (req: Request, res: Response) => {
+export const getInfoAboutAnimeNana = async (subBaseLink: string) => {
   try {
     try {
       const form = [
         ["order", "title"],
         ["sort", "ASC"],
       ];
+      const animeInfoURL = `${baseURL}/anime/${subBaseLink}`;
       const webpage = await getDataFromPage(animeInfoURL, form);
-      const title = await scrapeDataFromHTML(
+      const title = await scrapeDataFromHTML(webpage, ".anime__title");
+      const poster = await scrapeDataFromHTML(
         webpage,
-        ".anime__container .anime__title"
+        ".anime__wrapper img",
+        "src"
       );
-      // const
-      // const titleString = await findTitleString();
-
-      // const poster = await scrapeDataFromHTML(webpage, ".img-box img", "src");
-      // const banner = await scrapeDataFromHTML(webpage, ".anime__banner", "src");
+      const banner = await scrapeDataFromHTML(webpage, ".anime__banner", "src");
       const description = await scrapeDataFromHTML(
         webpage,
         ".anime__description"
       );
+      const shortInfoAnime = await scrapeDataFromHTML(
+        webpage,
+        ".anime__list info"
+      );
+      const season = shortInfoAnime[2];
+      const ep_count = shortInfoAnime[0];
+      const status = checkIfCompleted(ep_count);
+      const episodes = await scrapeDataFromHTML(
+        webpage,
+        ".episodes__slider a",
+        "href"
+      );
 
-      const animeArray = [];
+      const animeDetails = {
+        title,
+        poster,
+        description,
+        status,
+        ep_count,
+        episodes,
+        season,
+      };
 
-      for (let i = 0; i < title.length; i++) {
-        const temp = [];
-        temp.push(title[i]);
-        // temp.push(poster[i]);
-        temp.push(description[i]);
-        animeArray.push(temp);
-      }
-
-      res.status(200).send({ titles: animeArray });
+      return { animeDetails };
     } catch (err: any) {
-      res.status(500).send({ message: "Error occurred" });
+      return { message: "Error occurred" };
     }
   } catch (err: any) {
-    res.status(500).send({ message: "No title found" });
+    return { message: "No title found" };
   }
 };
 
@@ -174,5 +185,24 @@ const findTitleString = (str: string | null) => {
       regex.lastIndex++;
     }
     return m[1];
+  }
+};
+
+const checkIfCompleted = (str: string | null) => {
+  const regex = /(\d\/\d)/gm;
+  let m;
+  if (!str) return false;
+
+  while ((m = regex.exec(str)) !== null) {
+    // This is necessary to avoid infinite loops with zero-width matches
+    if (m.index === regex.lastIndex) {
+      regex.lastIndex++;
+    }
+
+    if (m[1]) {
+      return false;
+    } else {
+      return true;
+    }
   }
 };

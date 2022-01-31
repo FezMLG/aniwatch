@@ -71,3 +71,18 @@ export const getAllFromSeasonFrixy = async (
     return;
   }
 };
+
+export const getInfoAboutAnimeFrixy = async (baseLink: string) => {
+  if (!baseLink) {
+    return { message: "Title is empty" };
+  }
+
+  try {
+    const { data } = await axios.get(
+      `https://frixysubs.pl/api/anime/${baseLink}`
+    );
+    return data;
+  } catch (err: any) {
+    return { message: "Error occurred" };
+  }
+};
