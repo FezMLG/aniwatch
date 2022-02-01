@@ -50,7 +50,7 @@ const Anime = (props: any) => {
                 {index + 1}. {episode.title}
               </h3>
               <div className="flex flex-row flex-wrap justify-start my-4 gap-5">
-                {subName == "NanaSubs" ? loadEpisodesBtn : ""}
+                {subName == "NanaSubs" ? loadEpisodesBtn(episode.link) : ""}
                 {players}
               </div>
             </>
@@ -59,24 +59,47 @@ const Anime = (props: any) => {
       : "";
   };
 
-  const loadEpisodesBtn = () => {
+  const loadEpisodesBtn = (episodeLink: string) => {
     return (
       <>
-        <button>Załaduj</button>
+        <button onClick={() => loadEpisodes(episodeLink)}>Załaduj</button>
       </>
     );
   };
 
   const loadEpisodes = async (episodeLink: string) => {
-    const result = await axios.post(baseUrl + "/api/anime/test/anime", {
-      episodeLink,
-    });
+    const result = await axios.post(
+      baseUrl + "/api/anime/test/anime/episodes",
+      {
+        episodeLink,
+      }
+    );
+    console.log([result.data]);
+    await mapPlayersNana([result.data]);
   };
 
   const mapPlayers = (episode: { players: any[] }) => {
-    console.log(episode.players);
     return episode.players
       ? episode.players.map((player: any, index: number) => {
+          return (
+            <a
+              key={index}
+              href={player.link}
+              target="_blank"
+              rel="noreferrer"
+              className="border rounded border-transparent px-4 py-2 box-content bg-blue-700"
+            >
+              {player.name}
+            </a>
+          );
+        })
+      : "";
+  };
+
+  const mapPlayersNana = (players: any[]) => {
+    console.log(players);
+    return players
+      ? players.map((player: any, index: number) => {
           return (
             <a
               key={index}
