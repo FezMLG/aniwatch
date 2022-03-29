@@ -15,6 +15,9 @@ import { baseUrl } from "../App";
 
 const Anime = (props: any) => {
   const [animeDetails, setAnimeDetails] = useState<any>("");
+  const [showEpisodes, setShowEpisodes] = useState<boolean>(false);
+  const [episodePlayers, setEpisodePlayers] = useState<any>("");
+  const [episodeLink, setEpisodeLink] = useState<any>();
 
   const { subBaseLink, subName } =
     useParams<{ subBaseLink: string; subName: string }>();
@@ -44,14 +47,21 @@ const Anime = (props: any) => {
           console.log(episode);
           let players = mapPlayers(episode);
           console.log(players);
+          console.log(episodePlayers);
           return (
             <>
               <h3 className="font-bold capitalize">
                 {index + 1}. {episode.title}
               </h3>
-              <div className="flex flex-row flex-wrap justify-start my-4 gap-5">
-                {subName == "NanaSubs" ? loadEpisodesBtn(episode.link) : ""}
+              <div
+                className="flex flex-row flex-wrap justify-start my-4 gap-5"
+                id={(index + 1).toString()}
+              >
+                {subName == "NanaSubs"
+                  ? loadEpisodesBtn(episode.link, index + 1)
+                  : ""}
                 {players}
+                {episodePlayers}
               </div>
             </>
           );
@@ -59,10 +69,14 @@ const Anime = (props: any) => {
       : "";
   };
 
-  const loadEpisodesBtn = (episodeLink: string) => {
+  const loadEpisodesBtn = (episodeLink: string, index: number) => {
+    const onClick = () => {
+      setEpisodeLink(episodeLink);
+      console.log(episodeLink);
+    };
     return (
       <>
-        <button onClick={() => loadEpisodes(episodeLink)}>Załaduj</button>
+        <button onClick={onClick}>Załaduj</button>
       </>
     );
   };
@@ -75,7 +89,10 @@ const Anime = (props: any) => {
       }
     );
     console.log([result.data]);
-    await mapPlayersNana([result.data]);
+    console.log(showEpisodes);
+    const ret = mapPlayersNana(result.data);
+    console.log(ret);
+    setEpisodePlayers(ret);
   };
 
   const mapPlayers = (episode: { players: any[] }) => {
@@ -120,6 +137,10 @@ const Anime = (props: any) => {
     console.log("deatils " + animeDetails.title);
     console.log("/" + subBaseLink);
   }, []);
+
+  useEffect(() => {
+    loadEpisodes(episodeLink);
+  }, [episodeLink]);
 
   const Description = () => {
     return (
